@@ -1,3 +1,4 @@
+// src/pages/Profile/style.ts
 import styled from 'styled-components'
 import fundo from '../../assets/fundo.png'
 
@@ -102,12 +103,13 @@ export const ProductsGrid = styled.div`
 `
 
 export const ProductCard = styled.article`
-  height: max-content;
+  height: 380px;
   width: 320px;
   background: #e66767;
   border: 1px solid #e66767;
-  display: grid;
-  grid-template-rows: 180px auto auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   color: #FFEBD9;
   padding: 7px;
 `
@@ -149,7 +151,7 @@ export const AddButton = styled.button`
   &:hover { opacity: 0.85; }
 `
 
-/* ---------------- MODAL (apenas adições) ---------------- */
+/* ---------------- MODAL ---------------- */
 export const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
@@ -213,29 +215,6 @@ export const ModalActions = styled.div`
   align-items: center;
   gap: 12px;
   justify-content: space-between;
-`
-
-export const QtyControl = styled.div`
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #FFEBD9;
-  height: 32px;
-
-  button {
-    width: 32px;
-    height: 30px;
-    border: none;
-    background: #FFEBD9;
-    color: #e66767;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  span {
-    width: 40px;
-    text-align: center;
-    font-weight: 700;
-  }
 `
 
 export const ModalButtons = styled.div`

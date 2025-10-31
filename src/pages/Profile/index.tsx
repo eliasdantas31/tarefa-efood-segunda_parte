@@ -1,3 +1,4 @@
+// src/pages/Profile/index.tsx
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -60,7 +61,6 @@ type ApiRestaurant = {
   cardapio: ApiProduct[]
 }
 
-// Normaliza a URL da imagem (trim e troca http->https se necessário)
 function normalizeImgUrl(url?: string): string {
   const trimmed = (url || '').trim()
   if (!trimmed) return ''
@@ -85,7 +85,6 @@ export default function Profile(): JSX.Element {
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  // Buscar e selecionar restaurante pela navegação
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -96,6 +95,7 @@ export default function Profile(): JSX.Element {
         if (!res.ok) throw new Error('Falha ao buscar restaurantes')
         const data: ApiRestaurant[] = await res.json()
 
+        // Seleciona restaurante pelo id (preferência), título ou tipo vindo do state
         const byId = state.restaurantId
           ? data.find((r) => r.id === Number(state.restaurantId))
           : undefined
@@ -120,7 +120,6 @@ export default function Profile(): JSX.Element {
     fetchData()
   }, [state.restaurantId, state.title, state.category])
 
-  // Acessibilidade do modal (ESC)
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setModalOpen(false)
@@ -129,7 +128,6 @@ export default function Profile(): JSX.Element {
     return () => window.removeEventListener('keydown', onEsc)
   }, [])
 
-  // Trava scroll e gerencia foco
   useEffect(() => {
     if (modalOpen) {
       closeButtonRef.current?.focus()
@@ -145,9 +143,9 @@ export default function Profile(): JSX.Element {
   const category = restaurant?.tipo ?? state.category ?? ''
   const products = useMemo(() => (restaurant?.cardapio ?? []).slice(0, 6), [restaurant])
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function addToCart(_prod: ApiProduct) {
     setCartCount((prev) => prev + 1)
-    // integrar carrinho real posteriormente
   }
 
   function openModal(prod: ApiProduct, btn: HTMLButtonElement | null) {
@@ -261,7 +259,7 @@ export default function Profile(): JSX.Element {
               <ModalTitle id="modal-title">{selected.nome}</ModalTitle>
               <ModalDescription id="modal-desc">
                 {selected.descricao}
-                {selected.porcao ? ` — Serve: ${selected.porcao}` : null}
+                {selected.porcao ? ` Serve: ${selected.porcao}` : null}
               </ModalDescription>
 
               <ModalActions>
