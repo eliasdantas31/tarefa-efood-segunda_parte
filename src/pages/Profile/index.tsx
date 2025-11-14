@@ -27,7 +27,8 @@ import {
   ModalActions,
   ModalButtons,
   CloseButton,
-  BannerContainer
+  BannerContainer,
+  ModalText
 } from './style'
 
 import LogoImg from '../../assets/logo.png'
@@ -84,6 +85,7 @@ export default function Profile(): JSX.Element {
 
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<ApiProduct | null>(null)
+  const [modalImageSrc, setModalImageSrc] = useState<string | null>(null) // <- NOVO STATE
   const openButtonRef = useRef<HTMLButtonElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
 
@@ -137,6 +139,7 @@ export default function Profile(): JSX.Element {
     } else {
       document.body.style.overflow = ''
       openButtonRef.current?.focus()
+      setModalImageSrc(null) // <- limpa quando fecha
     }
   }, [modalOpen])
 
@@ -154,6 +157,21 @@ export default function Profile(): JSX.Element {
     setSelected(prod)
     setModalOpen(true)
     openButtonRef.current = btn
+
+    // TENTAR PEGAR A MESMA IMAGEM DO CARD
+    try {
+      const imgEl = document.querySelector(
+        `img[data-prod-id="${prod.id}"]`
+      ) as HTMLImageElement | null
+
+      console.log('Imagem do card encontrada para o produto', prod.id, imgEl?.src)
+
+      const src = imgEl?.src || normalizeImgUrl(prod.foto)
+      setModalImageSrc(src)
+    } catch (err) {
+      console.warn('Erro ao buscar imagem do card, usando foto da API', err)
+      setModalImageSrc(normalizeImgUrl(prod.foto))
+    }
   }
 
   function confirmAdd() {
@@ -197,6 +215,7 @@ export default function Profile(): JSX.Element {
             {!loading && !error && products.map((prod) => (
               <ProductCard key={prod.id}>
                 <ProductImage
+                  data-prod-id={prod.id}
                   src={normalizeImgUrl(prod.foto)}
                   alt={prod.nome}
                   loading="lazy"
@@ -241,9 +260,8 @@ export default function Profile(): JSX.Element {
             </CloseButton>
 
             <ModalImage
-              src={normalizeImgUrl(selected.foto)}
+              src={modalImageSrc || normalizeImgUrl(selected.foto)}
               alt={selected.nome}
-              crossOrigin="anonymous"
               loading="eager"
               onError={(e) => {
                 const img = e.currentTarget as HTMLImageElement
@@ -264,8 +282,12 @@ export default function Profile(): JSX.Element {
             <ModalContent>
               <ModalTitle id="modal-title">{selected.nome}</ModalTitle>
               <ModalDescription id="modal-desc">
-                {selected.descricao}
-                {selected.porcao ? ` Serve: ${selected.porcao}` : null}
+                <ModalText>
+                  {selected.descricao}
+                </ModalText>
+                <ModalText>
+                  {selected.porcao ? ` Serve: ${selected.porcao}` : null}
+                </ModalText>
               </ModalDescription>
 
               <ModalActions>
